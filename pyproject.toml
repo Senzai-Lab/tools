@@ -1,0 +1,15 @@
+[project]
+name = "tools"
+version = "0.1.0"
+description = "tools for neural data analysis"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "cmap>=0.7.2",
+    "loguru>=0.7.3",
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.3",
+    "pandas>=3.0.1",
+    "rich>=14.3.3",
+    "spikeinterface>=0.104.0",
+]
