@@ -32,7 +32,13 @@ def load_probe(path: str | Path) -> pd.DataFrame:
     else:
         raise ValueError(f"Unknown probe path: {path}")
     # Sort shank-wise ascending then depth-wise descending
-    return df.sort_values(by=['shank_ids', 'depth'], ascending=[True, False])
+    df.sort_values(by=['shank_ids', 'depth'],
+                   ascending=[True, True],
+                   inplace=True)
+    
+    df['depth_rank'] = df.groupby('shank_ids').cumcount()
+
+    return df
 
 def load_units_ks(path: Path) -> pd.DataFrame:
     # compute units summary from kilosort output
