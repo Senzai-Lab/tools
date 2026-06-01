@@ -73,21 +73,29 @@ def load_units_ks(path: Path) -> pd.DataFrame:
 
     return units_df
 
-def load_units_metadata(path: str | Path) -> pd.DataFrame:
+def load_units_metadata(path: str | Path, mode: str = 'auto') -> pd.DataFrame:
     """
     path is Kilosort4 output directory.
     """
     path = Path(path)
     assert path.is_dir()
-
+    
+    mode = mode.lower().strip()
+    if mode == 'auto':
+        if (path / 'cluster_info.tsv').is_file():
+            mode = 'phy'
+        else:
+            mode = 'kilosort'
+    
     # Load cluster metadata
-    # load phy results
-    if (path / 'cluster_info.tsv').is_file():
+    if mode == 'phy':
         metadata = pd.read_csv(path / 'cluster_info.tsv', sep='\t')
         metadata = metadata[metadata['group'] == 'good']
         metadata.rename(columns={'sh': 'shank_ids'}, inplace=True)
-    else:
+    elif mode == 'kilosort' or mode == 'ks':
         metadata = load_units_ks(path)
+    else:
+        raise ValueError(f"Unknown mode: {mode}. Supported modes: 'auto', 'phy', 'kilosort | 'ks'")
 
     # Sort and rank units shank-wise then depth-wise
     metadata.sort_values(
