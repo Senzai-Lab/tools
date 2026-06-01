@@ -15,7 +15,7 @@ def load_probe_ks(path: Path) -> pd.DataFrame:
     df["shank_ids"] = shank
     return df
 
-def load_probe(path: str | Path) -> pd.DataFrame:
+def load_probe(path: str | Path, sorted: bool = True) -> pd.DataFrame:
     """
     path can be:
     - Kilosort4 output directory
@@ -31,12 +31,14 @@ def load_probe(path: str | Path) -> pd.DataFrame:
         df = read_probeinterface(path).to_dataframe()
     else:
         raise ValueError(f"Unknown probe path: {path}")
-    # Sort shank-wise ascending then depth-wise descending
-    df.sort_values(by=['shank_ids', 'depth'],
-                   ascending=[True, True],
-                   inplace=True)
     
-    df['depth_rank'] = df.groupby('shank_ids').cumcount()
+    if sorted:
+        # Sort shank-wise ascending then depth-wise descending
+        df.sort_values(by=['shank_ids', 'depth'],
+                       ascending=[True, True],
+                       inplace=True)
+        
+        df['depth_rank'] = df.groupby('shank_ids').cumcount()
 
     return df
 
@@ -73,7 +75,7 @@ def load_units_ks(path: Path) -> pd.DataFrame:
 
     return units_df
 
-def load_units_metadata(path: str | Path, mode: str = 'auto') -> pd.DataFrame:
+def load_units_metadata(path: str | Path, mode: str = 'auto', sorted: bool = True) -> pd.DataFrame:
     """
     path is Kilosort4 output directory.
     """
@@ -97,12 +99,13 @@ def load_units_metadata(path: str | Path, mode: str = 'auto') -> pd.DataFrame:
     else:
         raise ValueError(f"Unknown mode: {mode}. Supported modes: 'auto', 'phy', 'kilosort | 'ks'")
 
-    # Sort and rank units shank-wise then depth-wise
-    metadata.sort_values(
-        by=['shank_ids', 'depth', 'cluster_id'],
-        ascending=[True, True, True],
-        inplace=True)
-    
-    metadata["depth_rank"] = metadata.groupby("shank_ids").cumcount()
+    if sorted:
+        # Sort and rank units shank-wise then depth-wise
+        metadata.sort_values(
+            by=['shank_ids', 'depth', 'cluster_id'],
+            ascending=[True, True, True],
+            inplace=True)
+        
+        metadata["depth_rank"] = metadata.groupby("shank_ids").cumcount()
     
     return metadata
