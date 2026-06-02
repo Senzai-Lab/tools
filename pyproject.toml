@@ -16,5 +16,7 @@ dependencies = [
     "pip>=26.1.1",
     "probeinterface>=0.3.2",
     "rich>=14.3.3",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.17.1",
     "spikeinterface>=0.104.0",
 ]
