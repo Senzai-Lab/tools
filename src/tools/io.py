@@ -111,13 +111,8 @@ def load_units_metadata(path: str | Path, mode: str = 'auto', sorted: bool = Tru
     
     return metadata
 
-def load_tsg(spike_times: np.ndarray | str, spike_clusters: np.ndarray | str, metadata: pd.DataFrame | None) -> nap.TsGroup:
+def load_tsg(spike_times: np.ndarray, spike_clusters: np.ndarray, metadata: pd.DataFrame | None) -> nap.TsGroup:
     """Load spike times and clusters into a TsGroup object. The cluster IDs are derived from the metadata if given."""
-    if isinstance(spike_times, str):
-        spike_times = np.load(spike_times)
-    if isinstance(spike_clusters, str):
-         spike_clusters = np.load(spike_clusters)
-
     if metadata is not None:
         uids = metadata.index
     else:
