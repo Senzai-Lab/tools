@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pynapple as nap
 
 def nearest_indices(points: np.ndarray, targets: np.ndarray) -> np.ndarray:
     dist2 = ((points[:, None, :] - targets[None, :, :]) ** 2).sum(axis=2)
