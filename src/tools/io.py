@@ -109,3 +109,25 @@ def load_units_metadata(path: str | Path, mode: str = 'auto', sorted: bool = Tru
         metadata["depth_rank"] = metadata.groupby("shank_ids").cumcount()
     
     return metadata
+
+def load_tsg(spike_times: np.ndarray | str, spike_clusters: np.ndarray | str, metadata: pd.DataFrame | None) -> nap.TsGroup:
+    """Load spike times and clusters into a TsGroup object. The cluster IDs are derived from the metadata if given."""
+    if isinstance(spike_times, str):
+        spike_times = np.load(spike_times)
+    if isinstance(spike_clusters, str):
+         spike_clusters = np.load(spike_clusters)
+
+    if metadata is not None:
+        uids = metadata.index
+    else:
+        uids = np.unique(spike_clusters)
+
+    dta = {}
+    for uid in uids:
+        mask = spike_clusters == uid
+        dta[uid] = nap.Ts(spike_times[mask])
+
+    if metadata is not None:
+        return nap.TsGroup(dta, metadata=metadata)
+    else:
+        return nap.TsGroup(dta)
